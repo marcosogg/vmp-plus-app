@@ -1,0 +1,52 @@
+import { NextResponse } from 'next/server';
+import { db } from '@/db/db';
+import { note } from '@/db/schema/notes-schema';
+import { eq, and } from 'drizzle-orm';
+import { withAuth } from '@/middleware/auth';
+
+export const GET = withAuth(async (request: Request, userId: string, { params }: { params: { id: string } }) => {
+  try {
+    const noteData = await db.select().from(note)
+      .where(and(eq(note.id, parseInt(params.id)), eq(note.userId, userId)))
+      .limit(1);
+    if (noteData.length === 0) {
+      return NextResponse.json({ error: 'Note not found' }, { status: 404 });
+    }
+    return NextResponse.json(noteData[0]);
+  } catch (error) {
+    console.error('Error fetching note:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+});
+
+export const PUT = withAuth(async (request: Request, userId: string, { params }: { params: { id: string } }) => {
+  try {
+    const body = await request.json();
+    const updatedNote = await db.update(note)
+      .set(body)
+      .where(and(eq(note.id, parseInt(params.id)), eq(note.userId, userId)))
+      .returning();
+    if (updatedNote.length === 0) {
+      return NextResponse.json({ error: 'Note not found' }, { status: 404 });
+    }
+    return NextResponse.json(updatedNote[0]);
+  } catch (error) {
+    console.error('Error updating note:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+});
+
+export const DELETE = withAuth(async (request: Request, userId: string, { params }: { params: { id: string } }) => {
+  try {
+    const deletedNote = await db.delete(note)
+      .where(and(eq(note.id, parseInt(params.id)), eq(note.userId, userId)))
+      .returning();
+    if (deletedNote.length === 0) {
+      return NextResponse.json({ error: 'Note not found' }, { status: 404 });
+    }
+    return NextResponse.json({ message: 'Note deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting note:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+});

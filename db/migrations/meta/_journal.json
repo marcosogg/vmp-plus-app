@@ -22,6 +22,13 @@
       "when": 1726123824712,
       "tag": "0002_white_hellcat",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1726744310390,
+      "tag": "0003_first_grey_gargoyle",
+      "breakpoints": true
     }
   ]
 }
