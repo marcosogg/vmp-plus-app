@@ -1,4 +1,5 @@
 import { createProfileAction, getProfileByUserIdAction } from "@/actions/profiles-actions";
+import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "@/components/utilties/providers";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -46,9 +47,8 @@ export default async function RootLayout({
             defaultTheme="dark"
             disableTransitionOnChange
           >
-            <main className="min-h-screen">
-              {children}
-            </main>
+            <Header />
+            {children}
             <Toaster />
           </Providers>
         </body>

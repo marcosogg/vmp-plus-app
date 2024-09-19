@@ -1,8 +1,7 @@
-import { createProfileAction, getProfileByUserIdAction } from "@/actions/profiles-actions";
+import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "@/components/utilties/providers";
 import { ClerkProvider } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -19,8 +18,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "AI Notes App",
-  description: "A simple AI notes app."
+  title: "Vendor Management App",
+  description: "A vendor management application."
 };
 
 export default async function RootLayout({
@@ -28,14 +27,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { userId } = auth();
-
-  if (userId) {
-    const profile = await getProfileByUserIdAction(userId);
-    if (!profile.data) {
-      await createProfileAction({ userId });
-    }
-  }
+  // Authentication is temporarily disabled for development purposes.
+  // TODO: Re-enable authentication checks before deploying to production.
 
   return (
     <ClerkProvider>
@@ -46,9 +39,8 @@ export default async function RootLayout({
             defaultTheme="dark"
             disableTransitionOnChange
           >
-            <main className="min-h-screen">
-              {children}
-            </main>
+            <Header />
+            {children}
             <Toaster />
           </Providers>
         </body>
